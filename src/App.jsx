@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-const prices = { chicken: 24, seafood: 28, veggie: 22 };
+const prices = { chicken: 24, seafood: 28, veggie: 22, tortilla: 18 };
 
 const menuItems = [
   {
@@ -26,6 +26,17 @@ const menuItems = [
     description: "Spanish rice, seasonal vegetables, chickpeas, smoked paprika and herb aioli.",
     tag: "Plant-based",
     emoji: "🌿",
+  },
+];
+
+const sideItems = [
+  {
+    id: "tortilla",
+    title: "Spanish Tortilla",
+    price: prices.tortilla,
+    description: "Classic potato and egg tortilla, served at room temperature. Made fresh every Friday.",
+    tag: "Side",
+    emoji: "🥚",
   },
 ];
 
@@ -69,8 +80,35 @@ function Counter({ value, onChange }) {
   );
 }
 
+function TakeawayBoxIcon() {
+  return (
+    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"
+      style={{ width: "100%", height: "100%" }}>
+      {/* Box body */}
+      <rect x="18" y="44" width="84" height="62" rx="6" fill="rgba(231,182,107,0.18)" stroke="#e7b66b" strokeWidth="2.5"/>
+      {/* Box lid top face */}
+      <path d="M14 28 L60 20 L106 28 L100 44 L18 44 Z" fill="rgba(231,182,107,0.28)" stroke="#e7b66b" strokeWidth="2.5" strokeLinejoin="round"/>
+      {/* Lid left flap line */}
+      <line x1="18" y1="44" x2="14" y2="28" stroke="#e7b66b" strokeWidth="1.5" strokeDasharray="3 2"/>
+      {/* Lid right flap line */}
+      <line x1="100" y1="44" x2="106" y2="28" stroke="#e7b66b" strokeWidth="1.5" strokeDasharray="3 2"/>
+      {/* Center fold line on lid */}
+      <line x1="60" y1="20" x2="60" y2="44" stroke="#e7b66b" strokeWidth="1.5" strokeDasharray="3 2"/>
+      {/* SIESTA text on box front */}
+      <text x="60" y="72" textAnchor="middle" fontFamily="'Playfair Display', serif"
+        fontSize="13" fontWeight="800" fill="#e7b66b" letterSpacing="3">SIESTA</text>
+      {/* Small divider line under text */}
+      <line x1="38" y1="78" x2="82" y2="78" stroke="#e7b66b" strokeWidth="1" opacity="0.5"/>
+      {/* Small tagline */}
+      <text x="60" y="91" textAnchor="middle" fontFamily="'Lora', serif"
+        fontSize="7" fill="rgba(231,182,107,0.7)" letterSpacing="1.5">BYRON BAY</text>
+    </svg>
+  );
+}
+
 export default function SiestaPreorderLanding() {
-  const [qty, setQty] = useState({ chicken: 0, seafood: 0, veggie: 0 });
+  const allItems = [...menuItems, ...sideItems];
+  const [qty, setQty] = useState({ chicken: 0, seafood: 0, veggie: 0, tortilla: 0 });
   const [name, setName] = useState("");
   const [orderType, setOrderType] = useState("pickup");
   const [pickupTime, setPickupTime] = useState("6:00 PM – 6:30 PM");
@@ -85,8 +123,8 @@ export default function SiestaPreorderLanding() {
 
   const whatsappNumber = "61410815295";
 
-  const orderLines = menuItems
-    .map(item => qty[item.id] > 0 ? `  • ${item.title} x${qty[item.id]} = $${qty[item.id] * item.price} AUD` : null)
+  const orderLines = allItems
+    .map(item => qty[item.id] > 0 ? `  • ${item.title} x${qty[item.id]} = $${qty[item.id] * prices[item.id]} AUD` : null)
     .filter(Boolean)
     .join("\n");
 
@@ -114,7 +152,7 @@ export default function SiestaPreorderLanding() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Lora:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Lora:wght@400;500&family=Space+Grotesk:wght@700&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #f7f0e4; }
         input:focus, select:focus, textarea:focus { border-color: #e7b66b !important; }
@@ -127,11 +165,17 @@ export default function SiestaPreorderLanding() {
         .fade-up-2 { animation: fadeUp 0.7s 0.15s ease forwards; opacity: 0; }
         .fade-up-3 { animation: fadeUp 0.7s 0.3s ease forwards; opacity: 0; }
         .fade-up-4 { animation: fadeUp 0.7s 0.45s ease forwards; opacity: 0; }
+        .fade-up-5 { animation: fadeUp 0.7s 0.55s ease forwards; opacity: 0; }
         .card-hover { transition: transform 0.2s, box-shadow 0.2s; }
         .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 40px #26351f18; }
         .tag-pill {
           display: inline-block; padding: 3px 12px; border-radius: 9999px;
           background: #26351f; color: #e7b66b; font-size: 11px;
+          font-family: 'Lora', serif; letter-spacing: 0.05em; font-weight: 500;
+        }
+        .tag-pill-side {
+          display: inline-block; padding: 3px 12px; border-radius: 9999px;
+          background: #e7b66b20; color: #26351f; font-size: 11px; border: 1px solid #e7b66b60;
           font-family: 'Lora', serif; letter-spacing: 0.05em; font-weight: 500;
         }
         .send-btn {
@@ -151,6 +195,69 @@ export default function SiestaPreorderLanding() {
         }
         .toggle-btn.active { background: #26351f; color: #e7b66b; }
         .toggle-btn.inactive { background: transparent; color: #26351f80; }
+
+        .inabox-badge {
+          display: inline-block;
+          background: #e7b66b;
+          color: #26351f;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: clamp(1.1rem, 3.5vw, 2rem);
+          font-weight: 700;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          padding: 6px 18px 5px;
+          border-radius: 6px;
+          line-height: 1;
+          margin-top: 6px;
+          display: inline-block;
+        }
+
+        .hero-grid {
+          display: grid;
+          grid-template-columns: 1fr auto;
+          gap: 0;
+          padding: 40px 40px 40px 44px;
+          align-items: center;
+        }
+
+        .hero-icon {
+          width: 160px;
+          height: 160px;
+          flex-shrink: 0;
+          margin-left: 32px;
+        }
+
+        .order-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          min-height: 420px;
+        }
+
+        .section-label {
+          font-size: 11px;
+          letter-spacing: 0.3em;
+          text-transform: uppercase;
+          color: #e7b66b;
+          font-family: 'Lora', serif;
+          margin-bottom: 12px;
+          margin-top: 4px;
+        }
+
+        @media (max-width: 640px) {
+          .hero-grid {
+            padding: 28px 24px;
+            grid-template-columns: 1fr;
+          }
+          .hero-icon {
+            display: none;
+          }
+          .order-grid {
+            grid-template-columns: 1fr;
+          }
+          .order-summary-panel {
+            border-radius: 0 0 28px 28px;
+          }
+        }
       `}</style>
 
       <div style={{ minHeight: "100vh", background: "#f7f0e4", fontFamily: "'Lora', serif", color: "#26351f" }}>
@@ -161,21 +268,19 @@ export default function SiestaPreorderLanding() {
             background: "#26351f", borderRadius: 32, overflow: "hidden",
             marginBottom: 32, boxShadow: "0 20px 60px #26351f30",
           }}>
-            <div style={{
-              display: "grid", gridTemplateColumns: "1fr auto",
-              gap: 0, padding: "40px 40px 40px 44px",
-              alignItems: "center",
-            }}>
+            <div className="hero-grid">
               <div>
                 <p style={{
                   fontSize: 11, letterSpacing: "0.4em", textTransform: "uppercase",
                   color: "#e7b66b", fontFamily: "'Lora', serif", marginBottom: 16,
                 }}>Byron Bay · Fridays</p>
                 <h1 style={{
-                  fontFamily: "'Playfair Display', serif", fontSize: "clamp(2.2rem, 6vw, 4rem)",
-                  fontWeight: 800, color: "#fff", lineHeight: 1.1, marginBottom: 18,
-                }}>Spanish rice<br /><em style={{ fontStyle: "italic", color: "#e7b66b" }}>in a box.</em></h1>
-                <p style={{ color: "rgba(255,255,255,0.72)", fontSize: 15, lineHeight: 1.8, maxWidth: 380 }}>
+                  fontFamily: "'Playfair Display', serif",
+                  fontSize: "clamp(2.2rem, 6vw, 4rem)",
+                  fontWeight: 800, color: "#fff", lineHeight: 1.1, marginBottom: 12,
+                }}>Spanish rice</h1>
+                <span className="inabox-badge">IN A BOX</span>
+                <p style={{ color: "rgba(255,255,255,0.72)", fontSize: 15, lineHeight: 1.8, maxWidth: 380, marginTop: 18 }}>
                   Fresh paella boxes available by pre-order in Byron Bay.
                   Limited portions, cooked in small batches, ready for pickup or delivery.
                 </p>
@@ -192,20 +297,14 @@ export default function SiestaPreorderLanding() {
                   ))}
                 </div>
               </div>
-              <div style={{
-                width: 160, height: 160, borderRadius: "50%",
-                background: "linear-gradient(135deg, #e7b66b, #d8664a)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                flexShrink: 0, marginLeft: 32,
-                boxShadow: "0 0 0 12px rgba(231,182,107,0.12)",
-              }}>
-                <span style={{ fontSize: 64 }}>🥘</span>
+              <div className="hero-icon">
+                <TakeawayBoxIcon />
               </div>
             </div>
           </div>
 
           {/* Menu cards */}
-          <div className="fade-up-2" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16, marginBottom: 32 }}>
+          <div className="fade-up-2" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16, marginBottom: 16 }}>
             {menuItems.map((item) => (
               <div key={item.id} className="card-hover" style={{
                 background: "#fff", borderRadius: 24, padding: 20,
@@ -227,12 +326,39 @@ export default function SiestaPreorderLanding() {
             ))}
           </div>
 
+          {/* Sides section */}
+          <div className="fade-up-3">
+            <p className="section-label">· Add a side ·</p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16, marginBottom: 32 }}>
+              {sideItems.map((item) => (
+                <div key={item.id} className="card-hover" style={{
+                  background: "#fff", borderRadius: 24, padding: 20,
+                  boxShadow: "0 4px 20px #26351f10",
+                  border: "1.5px solid #e7b66b30",
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
+                    <div>
+                      <span className="tag-pill-side">{item.tag}</span>
+                      <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, marginTop: 12, lineHeight: 1.3 }}>{item.title}</h2>
+                    </div>
+                    <div style={{ textAlign: "right", flexShrink: 0, marginLeft: 8 }}>
+                      <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 800 }}>${item.price}</span>
+                      <div style={{ fontSize: 10, color: "#26351f60", letterSpacing: "0.05em" }}>AUD</div>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: 13, lineHeight: 1.7, color: "#26351f80" }}>{item.description}</p>
+                  <Counter value={qty[item.id]} onChange={(v) => setQty(prev => ({ ...prev, [item.id]: v }))} />
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Order form */}
-          <div className="fade-up-3" style={{
+          <div className="fade-up-4" style={{
             background: "#fff", borderRadius: 28,
             boxShadow: "0 4px 30px #26351f12", overflow: "hidden",
           }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: 420 }}>
+            <div className="order-grid">
 
               {/* Left: form */}
               <div style={{ padding: "32px 36px" }}>
@@ -283,11 +409,11 @@ export default function SiestaPreorderLanding() {
               </div>
 
               {/* Right: summary */}
-              <div style={{ background: "#26351f", padding: "32px 36px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+              <div className="order-summary-panel" style={{ background: "#26351f", padding: "32px 36px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                 <div>
                   <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, color: "#fff", marginBottom: 20 }}>Order summary</h3>
                   <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                    {menuItems.map(item => (
+                    {allItems.map(item => (
                       <div key={item.id} style={{ display: "flex", justifyContent: "space-between", fontSize: 14, color: qty[item.id] > 0 ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.35)" }}>
                         <span>{item.emoji} {item.title}</span>
                         <span style={{ fontWeight: qty[item.id] > 0 ? 600 : 400 }}>
@@ -338,7 +464,7 @@ export default function SiestaPreorderLanding() {
           </div>
 
           {/* Footer */}
-          <div className="fade-up-4" style={{ textAlign: "center", marginTop: 40, color: "#26351f50", fontSize: 12, letterSpacing: "0.08em" }}>
+          <div className="fade-up-5" style={{ textAlign: "center", marginTop: 40, color: "#26351f50", fontSize: 12, letterSpacing: "0.08em" }}>
             SIESTA · Byron Bay · Fridays only · Pre-order only
           </div>
 

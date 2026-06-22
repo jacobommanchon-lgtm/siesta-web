@@ -65,13 +65,13 @@ export default function SiestaPreorderLanding() {
   const allLines = [boxLines, paellaLine].filter(Boolean).join("\n");
 
   const orderText = encodeURIComponent(
-    "Hi SIESTA! Pre-order request:\n\n" +
-    "Name: " + (name || "Not provided") + "\n" +
-    "Order: " + (orderType === "pickup" ? "Pickup" : "Delivery") + "\n" +
-    (orderType === "pickup" ? "Time: " + pickupTime + "\n" : "Address: " + (address || "To be confirmed") + "\n") +
-    "\nItems:\n" + (allLines || "  (no items selected)") + "\n\n" +
-    "Total: $" + total + " AUD\n" +
-    (notes ? "Notes: " + notes + "\n" : "") +
+    "Hi SIESTA! 🥘 Pre-order request:\n\n" +
+    "👋 Name: " + (name || "Not provided") + "\n" +
+    "🛵 Order: " + (orderType === "pickup" ? "Pickup" : "Delivery") + "\n" +
+    (orderType === "pickup" ? "🕕 Time: " + pickupTime + "\n" : "📌 Address: " + (address || "To be confirmed") + "\n") +
+    "\n🍽 Items:\n" + (allLines || "  (no items selected)") + "\n\n" +
+    "💵 Total: $" + total + " AUD\n" +
+    (notes ? "📝 Notes: " + notes + "\n" : "") +
     "\nPlease confirm availability and payment details. Thanks!"
   );
   const whatsappLink = "https://wa.me/" + whatsappNumber + "?text=" + orderText;

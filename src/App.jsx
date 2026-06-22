@@ -105,6 +105,7 @@ export default function SiestaPreorderLanding() {
   const [paellaPax, setPaellaPax] = useState(0);
   const [name, setName] = useState("");
   const [orderType, setOrderType] = useState("pickup");
+  const [pickupTime, setPickupTime] = useState("12:00 PM – 1:00 PM");
   const [address, setAddress] = useState("");
   const [notes, setNotes] = useState("");
 
@@ -119,13 +120,13 @@ export default function SiestaPreorderLanding() {
   const allLines = [boxLines, paellaLine].filter(Boolean).join("\n");
 
   const orderText = encodeURIComponent(
-    `Hi SIESTA! I'd like to place a pre-order 🥘\n\n` +
-    `👤 Name: ${name || "Not provided"}\n` +
-    `📦 Order type: ${orderType === "pickup" ? "Pickup" : "Delivery"}\n` +
-    (orderType === "delivery" ? `📍 Delivery address: ${address || "To be confirmed"}\n` : "") +
-    `\n🍽 Items:\n${allLines || "  (no items selected)"}\n\n` +
-    `💰 Total: $${total} AUD\n` +
-    (notes ? `📝 Notes: ${notes}\n` : "") +
+    `Hi SIESTA! Pre-order request:\n\n` +
+    `Name: ${name || "Not provided"}\n` +
+    `Order: ${orderType === "pickup" ? "Pickup" : "Delivery"}\n` +
+    (orderType === "pickup" ? `Time: ${pickupTime}\n` : `Address: ${address || "To be confirmed"}\n`) +
+    `\nItems:\n${allLines || "  (no items selected)"}\n\n` +
+    `Total: $${total} AUD\n` +
+    (notes ? `Notes: ${notes}\n` : "") +
     `\nPlease confirm availability and payment details. Thanks!`
   );
   const whatsappLink = `https://wa.me/${whatsappNumber}?text=${orderText}`;
@@ -299,46 +300,27 @@ export default function SiestaPreorderLanding() {
                     <div style={{ fontSize: 10, color: "#e7b66b80" }}>PER PERSON</div>
                   </div>
                 </div>
-                <p style={{ fontSize: 13, lineHeight: 1.7, color: "rgba(255,255,255,0.6)" }}>
+                <p style={{ fontSize: 13, lineHeight: 1.7, color: "rgba(255,255,255,0.6)", marginBottom: 16 }}>
                   Served the traditional way in an authentic paella pan. Minimum 2, maximum 6 people. Limited edition — flavour confirmed via WhatsApp.
                 </p>
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                  {[["Small", "2–3 pax"], ["Medium", "3–4 pax"], ["Big", "5–6 pax"]].map(([size, pax]) => (
+                    <div key={size} style={{
+                      flex: 1, minWidth: 80, textAlign: "center",
+                      border: "1px solid rgba(231,182,107,0.3)", borderRadius: 12, padding: "10px 8px",
+                    }}>
+                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 13, fontWeight: 700, color: "#e7b66b" }}>{size}</div>
+                      <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", marginTop: 3, letterSpacing: "0.05em" }}>{pax}</div>
+                    </div>
+                  ))}
+                </div>
                 <PaxCounter value={paellaPax} onChange={setPaellaPax} />
               </div>
             </div>
           </div>
 
-          {/* ── CATERING & PRIVATE EVENTS ── */}
-          <div className="fade-up-5">
-            <span className="section-label">· Private & events ·</span>
-            <div style={{ marginBottom: 32 }}>
-              <div style={{
-                background: "#1a2414", borderRadius: 24, padding: 32,
-                boxShadow: "0 4px 30px #26351f40",
-                border: "1px solid #e7b66b20",
-              }}>
-                <span style={{
-                  display: "inline-block", padding: "3px 12px", borderRadius: "9999px",
-                  background: "transparent", color: "#e7b66b", fontSize: 11,
-                  border: "1px solid #e7b66b50", fontFamily: "'Lora', serif",
-                  letterSpacing: "0.05em", fontWeight: 500, marginBottom: 16,
-                }}>By request only</span>
-                <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 800, color: "#fff", lineHeight: 1.2, marginBottom: 12 }}>
-                  Private Dining & Catering
-                </h2>
-                <p style={{ fontSize: 14, lineHeight: 1.8, color: "rgba(255,255,255,0.6)", maxWidth: 480, marginBottom: 24 }}>
-                  Private dinners, corporate events and bespoke catering. Everything tailored to you. Let's talk.
-                </p>
-                <a href={cateringLink} target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
-                  <button className="catering-btn">
-                    💬 Enquire via WhatsApp
-                  </button>
-                </a>
-              </div>
-            </div>
-          </div>
-
           {/* ── ORDER FORM ── */}
-          <div className="fade-up-6" style={{ background: "#fff", borderRadius: 28, boxShadow: "0 4px 30px #26351f12", overflow: "hidden" }}>
+          <div className="fade-up-5" style={{ background: "#fff", borderRadius: 28, boxShadow: "0 4px 30px #26351f12", overflow: "hidden" }}>
             <div className="order-grid">
               <div style={{ padding: "32px 36px" }}>
                 <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 800, marginBottom: 6 }}>🛍 Your pre-order</h2>
@@ -357,16 +339,32 @@ export default function SiestaPreorderLanding() {
                       <button className={`toggle-btn ${orderType === "delivery" ? "active" : "inactive"}`} onClick={() => setOrderType("delivery")}>🛵 Delivery</button>
                     </div>
                   </div>
-                  {orderType === "delivery" && (
+                  {orderType === "pickup" ? (
+                    <div>
+                      <label style={{ fontSize: 12, fontWeight: 500, letterSpacing: "0.05em", display: "block", marginBottom: 6 }}>PICKUP TIME</label>
+                      <select value={pickupTime} onChange={e => setPickupTime(e.target.value)} style={{ ...inputStyle, cursor: "pointer" }}>
+                        <option>12:00 PM – 1:00 PM</option>
+                        <option>1:00 PM – 2:00 PM</option>
+                        <option>2:00 PM – 3:00 PM</option>
+                        <option>3:00 PM – 4:00 PM</option>
+                        <option>4:00 PM – 5:00 PM</option>
+                        <option>5:00 PM – 6:00 PM</option>
+                        <option>6:00 PM – 7:00 PM</option>
+                        <option>7:00 PM – 8:00 PM</option>
+                      </select>
+                    </div>
+                  ) : (
                     <div>
                       <label style={{ fontSize: 12, fontWeight: 500, letterSpacing: "0.05em", display: "block", marginBottom: 6 }}>DELIVERY ADDRESS</label>
-                      <input value={address} onChange={e => setAddress(e.target.value)} placeholder="Byron Bay, Suffolk Park..." style={inputStyle} />
+                      <input value={address} onChange={e => setAddress(e.target.value)} placeholder="Byron Bay or Suffolk Park..." style={inputStyle} />
                       <p style={{ fontSize: 11, color: "#26351f60", marginTop: 6 }}>Delivery availability confirmed via WhatsApp.</p>
                     </div>
                   )}
                   <div>
                     <label style={{ fontSize: 12, fontWeight: 500, letterSpacing: "0.05em", display: "block", marginBottom: 6 }}>NOTES</label>
-                    <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Allergies, extra aioli, add rum cup to the traditional..." style={{ ...inputStyle, minHeight: 90, resize: "vertical" }} />
+                    <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Allergies, extra aioli, special requests…" style={{ ...inputStyle, minHeight: 90, resize: "vertical" }} />
+                  </div>
+                </div>
                   </div>
                 </div>
               </div>
@@ -399,8 +397,7 @@ export default function SiestaPreorderLanding() {
                       ${total} <span style={{ fontSize: 14, fontWeight: 400 }}>AUD</span>
                     </span>
                   </div>
-                  {orderType === "delivery" && <p style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", marginTop: 8 }}>+ delivery fee confirmed via WhatsApp</p>}
-                </div>
+                  {orderType === "delivery" && <p style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", marginTop: 8 }}>+ delivery fee confirmed via WhatsApp</p>}                </div>
                 <div>
                   <a href={totalItems > 0 ? whatsappLink : undefined} target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
                     <button className="send-btn" disabled={totalItems === 0} style={{ opacity: totalItems === 0 ? 0.45 : 1, cursor: totalItems === 0 ? "not-allowed" : "pointer" }}>
@@ -415,8 +412,36 @@ export default function SiestaPreorderLanding() {
             </div>
           </div>
 
-          <div className="fade-up-7" style={{ textAlign: "center", marginTop: 40, color: "#26351f50", fontSize: 12, letterSpacing: "0.08em" }}>
+          <div className="fade-up-6" style={{ textAlign: "center", marginTop: 40, color: "#26351f50", fontSize: 12, letterSpacing: "0.08em" }}>
             SIESTA · Byron Bay · Fridays only · Pre-order only
+          </div>
+
+          {/* ── CATERING & PRIVATE EVENTS ── */}
+          <div className="fade-up-7" style={{ marginTop: 32 }}>
+            <span className="section-label">· Private & events ·</span>
+            <div style={{
+              background: "#1a2414", borderRadius: 24, padding: 32,
+              boxShadow: "0 4px 30px #26351f40",
+              border: "1px solid #e7b66b20",
+            }}>
+              <span style={{
+                display: "inline-block", padding: "3px 12px", borderRadius: "9999px",
+                background: "transparent", color: "#e7b66b", fontSize: 11,
+                border: "1px solid #e7b66b50", fontFamily: "'Lora', serif",
+                letterSpacing: "0.05em", fontWeight: 500, marginBottom: 16,
+              }}>By request only</span>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 800, color: "#fff", lineHeight: 1.2, marginBottom: 12 }}>
+                Private Dining & Catering
+              </h2>
+              <p style={{ fontSize: 14, lineHeight: 1.8, color: "rgba(255,255,255,0.6)", maxWidth: 480, marginBottom: 24 }}>
+                Private dinners, corporate events and bespoke catering. Everything tailored to you. Let's talk.
+              </p>
+              <a href={cateringLink} target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
+                <button className="catering-btn">
+                  💬 Enquire via WhatsApp
+                </button>
+              </a>
+            </div>
           </div>
 
         </div>
